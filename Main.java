@@ -4,11 +4,10 @@ import java.util.Scanner;
 
 
 public class Main {
-	
+		
 	public static void main(String[] args) {
 	    Scanner scanner = new Scanner(System.in);
 	    int useCaseID;
-
 		
 		do{
 			System.out.println("Use-case-ek:" 
@@ -86,7 +85,7 @@ public class Main {
 		subID=scanner.nextInt();
 		switch(subID){
 		case 1:
-			System.out.println("\nrandom");
+		    ActionController.move(new Player(),1);
 			break;
 		default:
 			System.out.println("\nNincs ilyen almenüpont!");

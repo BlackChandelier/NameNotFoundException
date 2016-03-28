@@ -10,6 +10,8 @@ public class Main {
 	    Scanner scanner = new Scanner(System.in);
 	    int useCaseID;
 		
+	    /*Miután lefutott a kiválasztott use-case újra kiírjuk a menüt
+	      Egészen addig amíg a felhasználó egy nullával ki nem lép.*/
 		do{
 			System.out.println("Use-case-ek:" 
 					+ "\n1.Mozgás"
@@ -26,25 +28,31 @@ public class Main {
 
 			switch(useCaseID){
 			case 1:
-				caseMozgas(scanner);
+				Tabulator.resetTabNumber();
+				caseMozgas(scanner); //meghívódnak a mozgással kapcsolatos további use-case-ek
 				break;	
 			case 2:
-				caseDobozFel(scanner);
+				Tabulator.resetTabNumber();
+				caseDobozFel(scanner); //meghívódnak a doboz felvétellel kapcsolatos további use-case-ek
 			break;
 			case 3:
-				caseDobozLe(scanner);
+				Tabulator.resetTabNumber();
+				caseDobozLe(scanner); //meghívódnak a doboz lerakással kapcsolatos további use-case-ek
 				break;
 			case 4:
+				Tabulator.resetTabNumber();
 				System.out.println("\n4.Ajtó kinyitása/bezárása"
 						+ "\n\t4.1 Saját súly"
 						+ "\n\t4.2 Doboz");
 				break;
 			case 5:
+				Tabulator.resetTabNumber();
 				System.out.println("\n5.Közlekedés ajtón"
 						+ "\n\t5.1 Zárt"
 						+ "\n\t5.2 Nyitott");
 				break;
 			case 6:
+				Tabulator.resetTabNumber();
 				System.out.println("\n6.Lövés"
 						+ "\n\t6.1 Szakadék felett"
 						+ "\n\t6.2 Falra"
@@ -53,16 +61,19 @@ public class Main {
 						+ "\n\t6.5 Nyitott ajtón keresztül");
 				break;
 			case 7:
+				Tabulator.resetTabNumber();
 				System.out.println("\n7.Csillagkapu nyitás"
 						+ "\n\t7.1 Sárga"
 						+ "\n\t7.2 Kék");
 				break;
 			case 8:
+				Tabulator.resetTabNumber();
 				System.out.println("\n8. ZPM"
 						+ "\n\t7.1 Felvétel"
 						+ "\n\t7.2 Lerakás");
 				break;
 			default:
+				Tabulator.resetTabNumber();
 				System.out.println("\n\nNincs ilyen számú use-case. Próbáld újra!\n\n");
 				break;
 			}
@@ -81,34 +92,37 @@ public class Main {
 		case 1:
 			System.out.println("\n3.Doboz lerakása"
 					+ "\n\t3.1 Van a játékosnál doboz"
-					+ "\n\t\t3.1.1 Szakadékra"
-					+ "\n\t\t3.1.2 Falra"
-					+ "\n\t\t3.1.3 Zárt ajtóra"
-					+ "\n\t\t3.1.4 Nyitott ajtóra"
+					+ "\n\t\t3.1.1 Üres mezõre"
+					+ "\n\t\t3.1.2 Szakadékra"
+					+ "\n\t\t3.1.3 Falra"
+					+ "\n\t\t3.1.4 Zárt ajtóra"
+					+ "\n\t\t3.1.5 Nyitott ajtóra"
 			+ "\n\nAdd meg a kiválasztott almenüpont számát:");
 			subID=scanner.nextInt();
 			Player.getBox();
 			System.out.println("<- true");
-			ActionController.getNextTile(new Tile(),1);
 			Tabulator.increaseTabNumber();
-			Player.changeBox();
+			ActionController.getNextTile(new Tile(),1);
 			
 			switch(subID){
 			case 1:
-								
+				Tabulator.decreaseTabNumber();
+				Player.changeBox();
+				Tabulator.increaseTabNumber();
+				ActionController.changeVisitable(new Tile(),new Tile());
 				break;
 			case 2:
-				
+				Tabulator.decreaseTabNumber();
+				Player.changeBox();
 				break;
-			case 3:
-				
-				break;
-			case 4:
-				
+			case 5:
+				Tabulator.decreaseTabNumber();
+				Player.changeBox();
+				Tabulator.increaseTabNumber();
+				ActionController.changeVisitable(new Tile(),new Tile());
 				break;
 			}
-			Tabulator.decreaseTabNumber();
-			System.out.println("<- void");
+		
 			break;
 		case 2:
 			break;

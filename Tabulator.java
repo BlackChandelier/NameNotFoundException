@@ -20,7 +20,8 @@ public class Tabulator {
 	
 	//csökkenti a tabulátorok számát
 	public static void decreaseTabNumber(){
-		tabNumber--;
+		if(tabNumber!=0)
+			tabNumber--;
 	}
 	
 	//lenullázza a tabulátorok számát

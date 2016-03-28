@@ -10,10 +10,13 @@ public class Player implements Visitor{
 		return null;
 	}
 	public void visit(Visitable visitable) {
+		Tabulator.increaseTabNumber();
 		Tabulator.tabMethod();
 		System.out.println("-> Player.visit(nextTile)");
+		Player.setVisitable();
 		Tabulator.tabMethod();
 		System.out.println("<- void");
+		
 	}
 	
 	public static Boolean getBox(){
@@ -21,6 +24,16 @@ public class Player implements Visitor{
 		System.out.println("-> Player.getBox()");
 		return null;
 		
+	}
+	
+	public static void setVisitable(){
+		Tabulator.increaseTabNumber();
+		Tabulator.tabMethod();
+		System.out.println("-> Player.setVisitable(nextTile)");
+		Tabulator.tabMethod();
+		System.out.println("<- void");
+		Tabulator.decreaseTabNumber();
+
 	}
 	
 	public static void changeBox(){

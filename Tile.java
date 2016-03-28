@@ -8,10 +8,17 @@ public class Tile implements Visitable{
 		return tiles[0];
 	}
 
-	@Override
 	public void accept(Visitor visitor) {
-		// TODO Auto-generated method stub
-		
+		Tabulator.tabMethod();
+		System.out.println("-> nextTile.accept(visitor)");
+		Tabulator.tabMethod();
+		System.out.println("<- void");		
 	}
 
+	public void accept(String name) {
+		Tabulator.tabMethod();
+		System.out.println("-> nextTile.accept("+name+")");
+		Tabulator.tabMethod();
+		System.out.println("<- void");		
+	}
 }

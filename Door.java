@@ -24,7 +24,18 @@ public class Door extends Tile{
 		}
 	}
 	public Boolean isPassable(){
+		Tabulator.tabMethod();
+		System.out.println("-> nextTile.accept(Player)");
 		return passable;
+	}
+	
+	public static void changePassable(){
+		Tabulator.increaseTabNumber();
+		Tabulator.tabMethod();
+		System.out.println("-> door.changePassable()");
+		Tabulator.tabMethod();
+		System.out.println("<- void");
+		Tabulator.decreaseTabNumber();
 	}
 
 }

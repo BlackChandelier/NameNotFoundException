@@ -1,11 +1,12 @@
 package projlab;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 
 public class Main {
 		
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 	    Scanner scanner = new Scanner(System.in);
 	    int useCaseID;
 		
@@ -28,15 +29,11 @@ public class Main {
 				caseMozgas(scanner);
 				break;	
 			case 2:
-				System.out.println("\n2. Doboz felvétele"
-						+ "\n\t2.1 Van a játékosnál doboz"		
-						+ "\n\t2.2 Nincs a játékosnál doboz");
-				break;		
+				caseDobozFel(scanner);
+			break;
 			case 3:
-				System.out.println("\n3.Doboz lerakása"
-						+ "\n\t3.1 Van a játékosnál doboz"
-						+ "\n\t3.2 Nincs a játékosnál doboz");
-				break;	
+				caseDobozLe(scanner);
+				break;
 			case 4:
 				System.out.println("\n4.Ajtó kinyitása/bezárása"
 						+ "\n\t4.1 Saját súly"
@@ -67,10 +64,103 @@ public class Main {
 				break;
 			default:
 				System.out.println("\n\nNincs ilyen számú use-case. Próbáld újra!\n\n");
-				useCaseID=0;
 				break;
 			}
-		}while(useCaseID==0);
+			System.in.read();
+			}while(useCaseID!=0);
+	}
+
+	private static void caseDobozLe(Scanner scanner) {
+		int subID;
+		System.out.println("\n3.Doboz lerakása"
+				+ "\n\t3.1 Van a játékosnál doboz"
+				+ "\n\t3.2 Nincs a játékosnál doboz"
+		+ "\n\nAdd meg a kiválasztott almenüpont számát:");
+		subID=scanner.nextInt();
+		switch(subID){
+		case 1:
+			System.out.println("\n3.Doboz lerakása"
+					+ "\n\t3.1 Van a játékosnál doboz"
+					+ "\n\t\t3.1.1 Szakadékra"
+					+ "\n\t\t3.1.2 Falra"
+					+ "\n\t\t3.1.3 Zárt ajtóra"
+					+ "\n\t\t3.1.4 Nyitott ajtóra"
+			+ "\n\nAdd meg a kiválasztott almenüpont számát:");
+			subID=scanner.nextInt();
+			Player.getBox();
+			System.out.println("<- true");
+			ActionController.getNextTile(new Tile(),1);
+			Tabulator.increaseTabNumber();
+			Player.changeBox();
+			
+			switch(subID){
+			case 1:
+								
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				
+				break;
+			case 4:
+				
+				break;
+			}
+			Tabulator.decreaseTabNumber();
+			System.out.println("<- void");
+			break;
+		case 2:
+			break;
+		}
+	}
+
+	private static void caseDobozFel(Scanner scanner) {
+		int subID;
+		System.out.println("\n2. Doboz felvétele"
+				+ "\n\t2.1 Van a játékosnál doboz"		
+				+ "\n\t2.2 Nincs a játékosnál doboz"
+				+ "\n\nAdd meg a kiválasztott almenüpont számát:");
+		subID=scanner.nextInt();
+		switch(subID){
+		case 1:
+			System.out.println("\n2. Doboz felvétele"
+					+ "\n\t2.1 Van a játékosnál doboz"
+					+ "\n\t\t2.1.1 Van doboz a mezõn"		
+					+ "\n\t\t2.1.2 Nincs doboz a mezõn"
+					+ "\n\nAdd meg a kiválasztott almenüpont számát:");
+			
+			subID=scanner.nextInt();
+			Player.getBox();
+			Tabulator.increaseTabNumber();
+			Player.getVisitable();
+			new Player().visit(new Tile());
+			Tabulator.decreaseTabNumber();
+			System.out.println("<- false");
+			break;
+			
+		case 2:
+			System.out.println("\n2. Doboz felvétele"
+					+ "\n\t2.2 Nincs a játékosnál doboz"
+					+ "\n\t\t2.2.1 Van doboz a mezõn"		
+					+ "\n\t\t2.2.2 Nincs doboz a mezõn"
+					+ "\n\nAdd meg a kiválasztott almenüpont számát:");
+			subID=scanner.nextInt();
+			Player.getBox();
+			Tabulator.increaseTabNumber();
+			Player.getVisitable();
+			new Player().visit(new Tile());
+			Tabulator.decreaseTabNumber();
+			switch(subID){
+			case 1:
+				System.out.println("<- true");
+				break;
+			case 2:
+				System.out.println("<- false");
+				break;
+			}
+			break;
+		}
 	}
 
 	private static void caseMozgas(Scanner scanner) {
@@ -85,8 +175,20 @@ public class Main {
 		subID=scanner.nextInt();
 		switch(subID){
 		case 1:
+		    ActionController.move(new Player(),0);
+			break;
+		case 2:
 		    ActionController.move(new Player(),1);
 			break;
+		case 3:
+		    ActionController.move(new Player(),2);
+			break;
+		case 4:
+		    ActionController.move(new Player(),3);
+		    break;
+		case 5:
+		    ActionController.move(new Player(),4);
+		    break;
 		default:
 			System.out.println("\nNincs ilyen almenüpont!");
 		}

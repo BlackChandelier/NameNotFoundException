@@ -8,6 +8,7 @@ public class PortalBeam implements Visitor {
 	int[] coordinates;
 	
 	public void changeColor(String color){	//Beállítja a lövedék színét.
+		this.color=color;
 	}
 	
 	public String getColor(){	 //Visszaadja a lövedék színét.
@@ -17,6 +18,7 @@ public class PortalBeam implements Visitor {
 	public void setDirection(int newDirection){ //Beállítja a lövedék irányát. 
 		/*Ez a kilövéskor beállítódik.
 		 *  Az irány a játékosnak a kilövés pillanatában meglévő irányával lesz azonos.*/
+		this.direction=newDirection;
 	}
 
 	public int getDirection(){ //Visszaadja a lövedék irányát.
@@ -38,6 +40,7 @@ public class PortalBeam implements Visitor {
 			this.coordinates= temp.coordinates;
 			return;
 		default:
+			this.coordinates=null;
 			return;
 		}
 	}

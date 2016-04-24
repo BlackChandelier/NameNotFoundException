@@ -3,6 +3,7 @@ package projlab;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
@@ -96,6 +97,10 @@ public class Game {
 	    scanner.close();
 	    
 	}
+	public static void clear(){
+		for(int i=0; i<1000; i++)
+			System.out.println("");
+	}
 	
 	public void play(){	//​Meghívásakor elindul a játék. Innentől kezdve az ActionController feladata a bemenetek kezelése.
 		Scanner scanner = new Scanner(System.in);
@@ -133,18 +138,21 @@ public class Game {
 						keypressed=5;
 						break;
 				}
-				if(keypressed!=5){
+				clear();
+				if(keypressed==0)
+					ac.shoot(ac.players[0], "BLUE");
+				else if(keypressed!=5){
 					ac.move(ac.players[0], keypressed);
 				}else if(keypressed==5){
 					ac.boxing(ac.players[0]);
 				}
-				System.out.print("Ez a pályád:\n");
 				ac.getMap();
 				System.out.print("\nAdj meg egy parancsot: ");
 			}catch(Exception e){
 				System.out.println(e.getMessage().toString());
 			}
 		}while(!(input=scanner.next()).equals("exit"));
+	    scanner.close();
 	}
 }
 

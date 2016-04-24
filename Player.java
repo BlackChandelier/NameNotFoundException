@@ -8,7 +8,7 @@ public class Player implements Visitor{
 	private Tile tile; //Azt a Tile­t tárolja, amelyiken a felhasználó karaktere éppen áll.
 	private int collectedZPMs; //​Azért felel, hogy az összegyűjtött elemeket ZPMeket számontartsa.
 	int coordinates[]=new int[2];
-	private Boolean par; // Ezen keresztül fog jelezni az ac-nak, ha kell új ZPM a pályára
+	private Boolean par=false; // Ezen keresztül fog jelezni az ac-nak, ha kell új ZPM a pályára
 			
 	public static Visitable getVisitable(){ //megadja, hogy mi a következő mező
 		
@@ -30,11 +30,15 @@ public class Player implements Visitor{
 	public void addZPM(){ //hozzáad egyet a játékosnál lévő ZPM-ekhez 
 		/* Itt még új ZPM-et is kell csináltatni minden második ZPM felvételnél*/
 		collectedZPMs++;
-		
+		if(collectedZPMs%2==0){
+			par=true;
+		}else{
+			par=false;
+		}
 	}
 	
-	public void getZPM(){
-		
+	public int getZPM(){
+		return collectedZPMs;
 	}
 	
 	public int getRow(){
@@ -51,6 +55,17 @@ public class Player implements Visitor{
 		switch(visitable.getClass().getSimpleName()){
 		case "CleanTile":
 			this.coordinates= temp.coordinates;
+			return;
+		case "Scale":
+			Scale tempS=(Scale) visitable;
+			if(tempS.getWeight()<=0) {
+				this.coordinates= temp.coordinates;
+				tempS.setWeight(1);
+			}
+			return;
+		case "Door":
+			Door tempD=(Door) visitable;
+			if(tempD.isPassable()) this.coordinates= temp.coordinates;
 			return;
 		default:
 			return;

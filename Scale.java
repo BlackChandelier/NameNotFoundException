@@ -15,13 +15,12 @@ public class Scale extends Tile{
 	public void setWeightLimit(int limit){ 	//Növeli a mérlegen lévő súlyt.
 			weightLimit​=limit;
 	}
-	public static void getWeight(){ 	//Megadja a jelenleg a mérlegen lévő súlyt.
-			
+	public int getWeight(){ 	//Megadja a jelenleg a mérlegen lévő súlyt.
+			return currentWeight;
 	}
 	
 	public int getWeightLimit(){ //Megadja a jelenleg a mérleg súlyhatárát.
 		return weightLimit​; 	
-
 	}
 	
 	public int getID(){ //Visszaadja a mérleg azonosítóját

@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class ActionController {
 	
 	protected Player players[]=new Player[2]; 	//A két játékos tárolására szolgáló tömb.
-	protected Tile[][] visitables​;	 //A pályán lévő elemeket tároló tömb.
+	
 	protected Visitor replicator​; 	//A replikátor helyét jegyzi.
 	int countZPMs; 	//​A pályán lévő ZPM­ek számát jegyzi.
 	Visitable additionalStoredVisitable​;	 //A funkciók végrehajtását megkönnyítő plusz attribútum.
@@ -13,54 +13,97 @@ public class ActionController {
 	Boolean replicatorIsAlive​; 	//A replikátor létezéséről vagy nem létezéséről kapunk információt a segítségével.*/
 	int rows=0;
 	int columns=0;
+	Tile[][] visitables​;	 //A pályán lévő elemeket tároló tömb.
 	
-	public void move(Player player, int direction){ //mozgatja az adott visitor-t
-		
-		/* 0:balra 1:fel 2:jobbra 3:le */
-		
-		  int[] t= new int[2];
-		  
-		  switch(direction){
-		  case 0:
-		   t[0]=player.coordinates[0];
-		   t[1]=player.coordinates[1]-1;
-		   break;
-		  case 1:
-		   t[0]=player.coordinates[0]-1;
-		   t[1]=player.coordinates[1];
-		   break;
-		  case 2:
-		   t[0]=player.coordinates[0];
-		   t[1]=player.coordinates[1]+1;
-		   break;
-		  case 3:
-		   t[0]=player.coordinates[0]+1;
-		   t[1]=player.coordinates[1];
-		   break;
-		  }
-		  
-		  if(!(visitables​[t[0]][t[1]].getClass().getSimpleName().equals("Wall"))
-				  &&(!visitables​[t[0]][t[1]].getClass().getSimpleName().equals("Door")
-						  || ((Door) visitables​[t[0]][t[1]]).isPassable()))
-			  player.coordinates=t;
-		  	}
+	public void move(Visitor visitor, int direction){ //mozgatja az adott visitor-t
+		String s=visitor.getClass().getSimpleName();
+		if(s.equals("Player")){	
+			Player temp = (Player) visitor;
+			if(temp.direction==direction){ // mozgatás
+				getNextVisitable(temp.coordinates, direction).accept(visitor);
+			}else{ // forgatás
+				temp.direction=direction;
+			}
+		}
+		else if(s.equals("PortalBeam")){	
+			PortalBeam temp = (PortalBeam) visitor;
+			if(temp.direction==direction){ // mozgatás
+				getNextVisitable(temp.coordinates, direction).accept(visitor);
+			}else{ // forgatás
+				temp.direction=direction;
+			}
+		}
+	}
 	
-	public static Visitable getNextVisitable(Visitable currentTile,int direction){ //megadja, hogy a meghatározott irányban mi a következő mező
-
+	public void boxing(Player player){
+		if(!player.getBox()){
+			if(getNextVisitable(player.coordinates, player.direction).getClass().toString().contains("BoxedTile")){
+				player.changeBox();
+				changeVisitable(getNextVisitable(player.coordinates, player.direction), new CleanTile());
+			}
+		}
+		else{
+			if(getNextVisitable(player.coordinates, player.direction).getClass().toString().contains("CleanTile")){
+				player.changeBox();
+				changeVisitable(getNextVisitable(player.coordinates, player.direction), new BoxedTile());
+			}
+		}
+	}
+	
+	public Tile getNextVisitable(int[] coordinates,int direction){ //megadja, hogy a meghatározott irányban mi a következő mező
+		int[] temp = coordinates;
+		try{
+			switch(direction){
+				case 4:
+					return visitables​[temp[0]][temp[1]-1];
+				case 7:
+					return visitables​[temp[0]-1][temp[1]-1];
+				case 8:
+					return visitables​[temp[0]-1][temp[1]];
+				case 9:
+					return visitables​[temp[0]-1][temp[1]+1];
+				case 6:
+					return visitables​[temp[0]][temp[1]+1];
+				case 3:
+					return visitables​[temp[0]+1][temp[1]+1];
+				case 2:
+					return visitables​[temp[0]+1][temp[1]];
+				case 1:
+					return visitables​[temp[0]+1][temp[1]-1];
+			}
+		}catch(Exception e){
+			return null;
+		}
 		return null;
 	}
 
-	public static void changeVisitable(Visitable changingVisitable, Visitable newVisitable){ //megváltoztatja az adott visitable-t
-		
+	public void changeVisitable(Tile changingVisitable, Tile newVisitable){ //megváltoztatja az adott visitable-t
+		Tile temp_2= newVisitable;
+		switch(newVisitable.getClass().getSimpleName()){
+		case "BoxedTile":
+			temp_2=(BoxedTile) newVisitable;
+			break;
+		case "CleanTile":
+			temp_2=(CleanTile) newVisitable;
+			break;
+		}
+		int[] t=changingVisitable.coordinates;
+		temp_2.coordinates=t;
+		visitables​[t[0]][t[1]]=temp_2;
 	}
 	
 	public static void changeGates(Visitable oldGates[], Visitable newGates[]){ //megváltoztatja az aktuális kapukat
 
 	}
 	
-	public static void shoot(Visitor visitor,String color){ //az adott visitor adott színű lövedéket lő ki
-
-
+	public void shoot(Player visitor,String color){ //az adott visitor adott színű lövedéket lő ki
+		boolean alive=true;
+		PortalBeam beam= new PortalBeam();
+		beam.changeColor(color);
+		beam.coordinates=visitor.coordinates;
+		beam.direction=visitor.direction;
+		while(alive)
+			move(beam, beam.direction);
 	}
 	
 	public void getMap(){
@@ -76,11 +119,6 @@ public class ActionController {
 			    		System.out.print(",");
 		    		break;
 		    	case "BoxedTile":
-		    		if(players[0]!=null&&i==players[0].getRow()&&j==players[0].getColumn())
-			    		System.out.print("O,");
-		    		else if(players[1]!=null&&i==players[1].getRow()&&j==players[1].getColumn())
-			    		System.out.print("J,");
-		    		else
 		    		System.out.print("B,");
 		    		break;
 		    	case "CleanTile":
@@ -92,19 +130,9 @@ public class ActionController {
 		    		System.out.print("C,");
 		    		break;
 		    	case "Scale":
-		    		if(players[0]!=null&&i==players[0].getRow()&&j==players[0].getColumn())
-			    		System.out.print("O,");
-		    		else if(players[1]!=null&&i==players[1].getRow()&&j==players[1].getColumn())
-			    		System.out.print("J,");
-		    		else
 		    		System.out.print("S"+((Scale) visitables​[i][j]).getID()+"."+((Scale) visitables​[i][j]).getWeightLimit()+",");
 		    		break;
 		    	case "Door":
-		    		if(players[0]!=null&&i==players[0].getRow()&&j==players[0].getColumn())
-			    		System.out.print("O,");
-		    		else if(players[1]!=null&&i==players[1].getRow()&&j==players[1].getColumn())
-			    		System.out.print("J,");
-		    		else
 		    		System.out.print("D"+((Door) visitables​[i][j]).getID()+",");
 		    		break;
 		    	default:

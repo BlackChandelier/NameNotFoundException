@@ -10,11 +10,12 @@ public class Door extends Tile{
 		return passable;
 	}
 	
+	public int getID(){ //Megmondja, hogy nyitva van-e az ajtó
+		return doorID;
+	}
+	
 	public void changePassable(){	//Megváltoztatja az ajtó átjárhatóságát
 		passable=!passable;
 	}
-	
-	public int getID(){ //Visszaadja az ajtó azonosítóját
-		return doorID; 	
-	}
+
 }

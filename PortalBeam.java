@@ -4,13 +4,8 @@ public class PortalBeam implements Visitor {
 	
 	private String color; 	//​A lövedék színét tárolja.
 	private Tile tile;	 //​A lövedék helyét tárolja.
-	private int direction; 	 //​A lövedék irányát tárolja.
-	
-	@Override
-	public void visit(Visitable visitable) {
-		// TODO Auto-generated method stub
-		
-	}
+	int direction; 	 //​A lövedék irányát tárolja.
+	int[] coordinates;
 	
 	public void changeColor(String color){	//Beállítja a lövedék színét.
 	}
@@ -33,6 +28,18 @@ public class PortalBeam implements Visitor {
 	}
 
 	public void setVisitable(Visitable newVisitable){	//Beállítja a következő mezőt.
+	}
+
+	@Override
+	public void visit (Visitable visitable){
+		Tile temp = (Tile)visitable;
+		switch(visitable.getClass().getSimpleName()){
+		case "CleanTile":
+			this.coordinates= temp.coordinates;
+			return;
+		default:
+			return;
+		}
 	}
 
 }

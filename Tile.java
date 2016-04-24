@@ -1,9 +1,9 @@
 package projlab;
 
-public class Tile implements Visitable{
+public abstract class Tile implements Visitable{
 	
 	private Tile[] tiles; 	//​Eltárolja a mező szomszédjait.
-	
+	int[] coordinates= new int[2];
 	public Visitable getVisitable(int direction){	//Megadja a következő mezőt
 		return tiles[direction];
 	}
@@ -11,5 +11,4 @@ public class Tile implements Visitable{
 	public void accept(Visitor visitor) {
 			visitor.visit(this);
 	}
-
 }

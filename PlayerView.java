@@ -26,8 +26,10 @@ public class PlayerView {
 		}				
 		else{
 			switch(direction){
-			case 0: img2 = ImageIO.read(new File("src/projlab/map/jaffa_left.png")); break; 			
+			case 0: img2 = ImageIO.read(new File("src/projlab/map/jaffa_left.png")); break; 
+			case 1: img2 = ImageIO.read(new File("src/projlab/map/jaffa_up.png")); break; 
 			case 2: img2 = ImageIO.read(new File("src/projlab/map/jaffa_right.png")); break;
+			case 3: img2 = ImageIO.read(new File("src/projlab/map/jaffa_down.png")); break; 
 			default: break;
 			}			
 				view.drawTile(x, y, img2);

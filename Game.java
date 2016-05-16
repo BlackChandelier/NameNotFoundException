@@ -2,6 +2,8 @@ package projlab;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,6 +31,9 @@ public class Game {
 	ReplicatorView RV = new ReplicatorView(view);
 	ZPMView ZV = new ZPMView(view);
 	int pDirection = -1; // feljegyezzük a játékos pozícióját
+	int file=0;
+	int column=0;
+	int row=0;
 	
 	
 	public void run() throws FileNotFoundException{ //A játékot készíti elő. Létrehozza az ActionControllert.
@@ -39,9 +44,16 @@ public class Game {
 		int column=0;
 		int row=0;
 		
-		view.menu();
+		try {
+			view.menu();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		CustomMouseListener listener = new CustomMouseListener();
+		view.addMouseListener(listener);
 		
-	    Scanner scanFileName = new Scanner(System.in);
+	    /*Scanner scanFileName = new Scanner(System.in);
 	    file=scanFileName.nextInt();
 	    switch(file){
 	    case 1:
@@ -67,7 +79,10 @@ public class Game {
 	    	break;
 	    default:
 	    	filename="level3.csv";
-	    }
+	    }*/		
+	}
+	
+	public void run2(String filename) throws FileNotFoundException{
 		Scanner scanner = new Scanner(new File(filename)); //Itt nyitjuk meg a beolvasandó pályát
 	    scanner.useDelimiter(",");
 	    System.out.print(" ");  
@@ -246,18 +261,29 @@ public class Game {
 	    }
 	    scanner.close();
 	    view.setMap(column, row);
-	    view.addMyKeyListener(new MKeyListener());
+	    view.addMyKeyListener(new MKeyListener());	
+	    try {
+			drawWalls();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    ViewThread VT = new ViewThread();
+	    Thread viewthread = new Thread(VT);
+	    viewthread.start();
+	    ReplicatorThread RT = new ReplicatorThread();
+	    Thread repthread = new Thread(RT);
+	    repthread.start();
 	}
 	
+	
 	public void play() throws FileNotFoundException, UnsupportedEncodingException{	//​Meghívásakor elindul a játék. Innentől kezdve az ActionController feladata a bemenetek kezelése.
-	    Scanner scanner = new Scanner(System.in);
-	    String temp=null;
-	    System.out.print("Add meg, hogy consol-ra vagy fájlba szeretnél írni (0:consol, 1:fájl): ");
+	    /*System.out.print("Add meg, hogy consol-ra vagy fájlba szeretnél írni (0:consol, 1:fájl): ");
 	    Scanner scanWhere = new Scanner(System.in);
-	    toFile=scanWhere.nextInt();	    
+	    toFile=scanWhere.nextInt();	    */
 	    
-	    
-	    try {
+				
+	    try {	    	
 			drawWalls();
 			for(int i = 0; i < ac.getRows();i++){
 		    	for(int j = 0; j < ac.getColumns();j++){		    		
@@ -266,15 +292,9 @@ public class Game {
 		    }  
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+		e.printStackTrace();
 		}
-	    
-	    ViewThread VT = new ViewThread();
-	    Thread viewthread = new Thread(VT);
-	    viewthread.start();
-	    ReplicatorThread RT = new ReplicatorThread();
-	    Thread repthread = new Thread(RT);
-	    repthread.start();	    
+	    	    
 		
 	}	
 	
@@ -290,6 +310,7 @@ public class Game {
 				if(((CleanTile) v).getZPM())
 					ZV.drawZPM(i, j);
 			break;
+			case "Wall": WV.drawWall(i, j); break;		
 			case "BoxedTile": BTV.drawBoxedTile(i, j); break;
 			case "Door": DV.drawDoor(i, j, (Door)v); break;
 			case "Hole": HV.drawHole(i, j); break;
@@ -526,6 +547,65 @@ public class Game {
 	    }
 	}
 
+	
+	//egérlttuntást figyelő osztáy
+	class CustomMouseListener implements MouseListener{
 
+		public int clickedButton;
+		CustomMouseListener(){
+			clickedButton = 0;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			
+			//1 player gomb
+			if (e.getX() > 97 && e.getX() < 303 &&
+				e.getY() > 54 && e.getY() < 126)
+				try {
+					run2("level1.csv");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			else if (e.getX() >  97 && e.getX() < 303 &&
+					 e.getY() > 154 && e.getY() < 226)
+				try {
+					run2("level2.csv");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			//custom gomb
+			else if (e.getX() >  97 && e.getX() < 303 &&
+					 e.getY() > 254 && e.getY() < 326)
+						clickedButton = 3;
+		}		
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
 }
 

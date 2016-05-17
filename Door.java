@@ -2,7 +2,6 @@ package projlab;
 
 public class Door extends Tile{
 	
-	@SuppressWarnings("unused")
 	private Tile[] tiles;	//​Eltárolja a mező szomszédjait.
 	private Boolean passable=false; //Eltárolja, hogy nyitva van-e az ajtó
 	public int doorID;

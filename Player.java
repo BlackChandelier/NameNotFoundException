@@ -2,11 +2,9 @@ package projlab;
 
 public class Player implements Visitor{
 	
-	@SuppressWarnings("unused")
 	private String name; //​Játékos neve
 	private int direction=0; //​A játékos irányát tárolja.
 	private Boolean hasBox=false; //​Azt jegyzi, hogy van a felhasználónál doboz, vagy nincs.
-	@SuppressWarnings("unused")
 	private Tile tile; //Azt a Tile­t tárolja, amelyiken a felhasználó karaktere éppen áll.
 	private int collectedZPMs=0; //​Azért felel, hogy az összegyűjtött elemeket ZPMeket számontartsa.
 	int coordinates[]=new int[2];

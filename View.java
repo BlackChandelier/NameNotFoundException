@@ -1,17 +1,19 @@
 package projlab;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import projlab.Game.MKeyListener;
 
-@SuppressWarnings("serial")
 public class View extends JFrame{
 
 	private JPanel map;
@@ -19,8 +21,8 @@ public class View extends JFrame{
 	public void menu() throws IOException{
 		this.setVisible(true);	
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		//vï¿½r 400ms-ot kï¿½lï¿½nben a rajzolï¿½s nem mï¿½kï¿½dik
-		// TODO gyorsabb gï¿½pen ellenï¿½rizni, hogy ott is fennï¿½ll-e a helyzet
+		//vár 400ms-ot különben a rajzolás nem mûködik
+		// TODO gyorsabb gépen ellenõrizni, hogy ott is fennáll-e a helyzet
 		try{Thread.sleep(400);}
 		catch(InterruptedException e){}
 		JPanel menu = new JPanel();
@@ -28,7 +30,7 @@ public class View extends JFrame{
 		menu.setSize(400, 400);
 		this.add(menu);
 		
-		//a menï¿½t felï¿½pï¿½tï¿½ kï¿½pek
+		//a menüt felépítõ képek
 		Image background = ImageIO.read(new File("src/projlab/menu/menu_bg.png"));
 		Image onePlayerBtn = ImageIO.read(new File("src/projlab/menu/menu_1player.png"));
 		Image twoPlayerBtn = ImageIO.read(new File("src/projlab/menu/menu_2players.png"));

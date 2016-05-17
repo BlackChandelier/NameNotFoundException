@@ -17,20 +17,21 @@ import projlab.Game.MKeyListener;
 public class View extends JFrame{
 
 	private JPanel map;
+	private JPanel menu;
 	
 	public void menu() throws IOException{
 		this.setVisible(true);	
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		//vár 400ms-ot különben a rajzolás nem mûködik
-		// TODO gyorsabb gépen ellenõrizni, hogy ott is fennáll-e a helyzet
+		//vï¿½r 400ms-ot kï¿½lï¿½nben a rajzolï¿½s nem mï¿½kï¿½dik
+		// TODO gyorsabb gï¿½pen ellenï¿½rizni, hogy ott is fennï¿½ll-e a helyzet
 		try{Thread.sleep(400);}
 		catch(InterruptedException e){}
-		JPanel menu = new JPanel();
+		menu = new JPanel();
 		this.setSize(400, 400);
 		menu.setSize(400, 400);
 		this.add(menu);
 		
-		//a menüt felépítõ képek
+		//a menï¿½t felï¿½pï¿½tï¿½ kï¿½pek
 		Image background = ImageIO.read(new File("src/projlab/menu/menu_bg.png"));
 		Image onePlayerBtn = ImageIO.read(new File("src/projlab/menu/menu_1player.png"));
 		Image twoPlayerBtn = ImageIO.read(new File("src/projlab/menu/menu_2players.png"));
@@ -42,6 +43,30 @@ public class View extends JFrame{
 		menu.getGraphics().drawImage(customBtn, 97, 254, null);
 	}
 	
+	public void end(boolean vic){
+		this.setSize(400, 400);		
+		menu.setSize(400, 400);
+		if(vic){
+			Image background = null;
+			try {
+				background = ImageIO.read(new File("src/projlab/menu/victory.png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			menu.getGraphics().drawImage(background, 0, 0, null);
+		}
+		else{
+			Image background = null;
+			try {
+				background = ImageIO.read(new File("src/projlab/menu/defeat.png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			menu.getGraphics().drawImage(background, 0, 0, null);
+		}
+	}
 	
 	public void setMap(int columns, int rows){
 		map = new JPanel();

@@ -34,7 +34,9 @@ public class Game {
 	int file=0;
 	int column=0;
 	int row=0;
-	
+	ViewThread VT;
+    Thread viewthread;
+    CustomMouseListener listener;
 	
 	public void run() throws FileNotFoundException{ //A játékot készíti elő. Létrehozza az ActionControllert.
 	
@@ -50,7 +52,7 @@ public class Game {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		CustomMouseListener listener = new CustomMouseListener();
+		listener = new CustomMouseListener();
 		view.addMouseListener(listener);
 		
 	    /*Scanner scanFileName = new Scanner(System.in);
@@ -263,41 +265,21 @@ public class Game {
 	    scanner.close();
 	    view.setMap(column, row);
 	    view.addMyKeyListener(new MKeyListener());	
+	    view.removeMouseListener(listener);
 	    try {
 			drawWalls();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    ViewThread VT = new ViewThread();
-	    Thread viewthread = new Thread(VT);
+	    VT = new ViewThread();
+	    viewthread = new Thread(VT);
 	    viewthread.start();
 	    ReplicatorThread RT = new ReplicatorThread();
 	    Thread repthread = new Thread(RT);
 	    repthread.start();
 	}
-	
-	
-	public void play() throws FileNotFoundException, UnsupportedEncodingException{	//​Meghívásakor elindul a játék. Innentől kezdve az ActionController feladata a bemenetek kezelése.
-	    /*System.out.print("Add meg, hogy consol-ra vagy fájlba szeretnél írni (0:consol, 1:fájl): ");
-	    Scanner scanWhere = new Scanner(System.in);
-	    toFile=scanWhere.nextInt();	    */
-	    
-				
-	    try {	    	
-			drawWalls();
-			for(int i = 0; i < ac.getRows();i++){
-		    	for(int j = 0; j < ac.getColumns();j++){		    		
-		    			drawTile(i,j);
-		    	}
-		    }  
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-		e.printStackTrace();
-		}
-	    	    
 		
-	}	
 	
 	// Adott koordinátán lévő mezőt kirajzoljuk
 	private void drawTile(int i, int j) throws IOException{
@@ -392,13 +374,8 @@ public class Game {
 	    				drawTile(i,j);
 	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
 	    				drawTile(i,j);
-	    		}
-	    		/*if(i != oRow && j != oColumn || i!=jRow && j!=jColumn){
-	    			if(!ac.replicatorIsAlive)
-	    				drawTile(i,j);
-	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
-	    				drawTile(i,j);
-	    		} */ 	    					
+	    			end(false);
+	    		}	    			    					
 	    	}
 	    }  
 	    
@@ -509,6 +486,11 @@ public class Game {
 		
 	}
 
+	
+	public void end(boolean vic){
+		VT.terminate();
+		view.end(vic);		
+	}
 
 	// Replicátor mozgatásáért felel
 	private class ReplicatorThread implements Runnable{
@@ -531,12 +513,18 @@ public class Game {
 	//Megjelenítésért felel
 	private class ViewThread implements Runnable{
 
+		boolean run = true;
+		
+		public void terminate(){
+			run = false;
+		}
+		
 		@Override
 		public void run() {
-			while(true){
+			while(run){
 				try {
 					ac.getMap();
-					Output();					
+					Output();						
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -547,37 +535,14 @@ public class Game {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				if(ac.vic){
+					end(true);
+				}
 			}							
 		}
 		
 	}
 	
-	// unused
-	private class ONeillThread implements Runnable{
-		@Override
-		public void run() {	
-			String temp;
-			Scanner scanner = new Scanner(System.in);
-			while(true){				
-				temp=scanner.next();	
-				ONeill(temp);
-			}
-		}		
-	}
-	 // unused
-	private class JaffaThread implements Runnable{
-
-		@Override
-		public void run() {
-			String temp;
-			Scanner scanner = new Scanner(System.in);
-			while(true){				
-				temp=scanner.next();	
-				Jaffa(temp);
-			}			
-		}		
-	}	
-
 	// Key listener, figyeli a billentyűzetet, jobban is lehetne implementálni, optimalizálásra szorul
 	class MKeyListener extends KeyAdapter {
 

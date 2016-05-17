@@ -160,6 +160,7 @@ public class Game {
 		       		case 'Z':
 		       			ac.visitables​[row][column]=new CleanTile();
 		       			((CleanTile) ac.visitables​[row][column]).changeZPM();
+		       			ac.countZPMs++;
 		       			ac.visitables​[row][column].coordinates=tempArray;
 		       			break;
 		       		case 'B':
@@ -338,19 +339,66 @@ public class Game {
 	// Megjelenítéssel foglalkozó szál hívogatja folyamatosan, megjeleníti a pályát
 	
 	private void Output() throws IOException{
-			
-		int oRow = ac.getPlayer(0).getRow();
-		int oColumn = ac.getPlayer(0).getColumn();		
+		//O'Neil pozíciója
+		int oRow;
+		int oColumn;
 		
+		if(ac.getPlayer(0)!=null){
+		oRow = ac.getPlayer(0).getRow();
+		oColumn = ac.getPlayer(0).getColumn();		
+		}else{
+			oRow=-1;
+			oColumn=-1;
+		}
+		//Jaffa pozíciója
+		int jRow;
+		int jColumn;
+		
+		if(ac.getPlayer(1)!=null){
+		jRow = ac.getPlayer(1).getRow();
+		jColumn = ac.getPlayer(1).getColumn();		
+		}else{
+			jRow=-1;
+			jColumn=-1;
+		}
 		// Mezők kirajzolása, ha visitor áll rajta, nem bántjuk (nem rajzoljuk ki újra)
 	    for(int i = 0; i < ac.getRows();i++){
 	    	for(int j = 0; j < ac.getColumns();j++){
-	    		if(i != oRow || j != oColumn){
+	    		if(ac.getPlayer(0)!=null){
+	    			if (ac.getPlayer(1)!=null){
+	    				if((i != oRow || j != oColumn) && (i!=jRow || j!=jColumn)){
+	    	    			if(!ac.replicatorIsAlive)
+	    	    				drawTile(i,j);
+	    	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
+	    	    				drawTile(i,j);
+	    	    		}  	
+	    			}else{
+	    				if(i != oRow || j != oColumn){
+	    	    			if(!ac.replicatorIsAlive)
+	    	    				drawTile(i,j);
+	    	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
+	    	    				drawTile(i,j);
+	    	    		}  	
+	    			}
+	    		}else if(ac.getPlayer(1)!=null){
+	    			if(i != jRow || j != jColumn){
+    	    			if(!ac.replicatorIsAlive)
+    	    				drawTile(i,j);
+    	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
+    	    				drawTile(i,j);
+    	    		}  	
+	    		} else { /////////////////////////////////////////////////////////////////IDE KELL A VERESÉG KÉPERNYŐ
 	    			if(!ac.replicatorIsAlive)
 	    				drawTile(i,j);
 	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
 	    				drawTile(i,j);
-	    		}  	    					
+	    		}
+	    		/*if(i != oRow && j != oColumn || i!=jRow && j!=jColumn){
+	    			if(!ac.replicatorIsAlive)
+	    				drawTile(i,j);
+	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
+	    				drawTile(i,j);
+	    		} */ 	    					
 	    	}
 	    }  
 	    
@@ -608,4 +656,3 @@ public class Game {
 	}
 	
 }
-

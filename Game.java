@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 
-import javax.swing.JFrame;
-
 public class Game {
 	
 	protected ActionController ac;
@@ -39,11 +37,6 @@ public class Game {
 	public void run() throws FileNotFoundException{ //A játékot készíti elő. Létrehozza az ActionControllert.
 	
 		ac=new ActionController();		
-		String filename;
-		int file=0;
-		int column=0;
-		int row=0;
-		
 		try {
 			view.menu();
 		} catch (IOException e) {
@@ -552,31 +545,7 @@ public class Game {
 		
 	}
 	
-	// unused
-	private class ONeillThread implements Runnable{
-		@Override
-		public void run() {	
-			String temp;
-			Scanner scanner = new Scanner(System.in);
-			while(true){				
-				temp=scanner.next();	
-				ONeill(temp);
-			}
-		}		
-	}
-	 // unused
-	private class JaffaThread implements Runnable{
-
-		@Override
-		public void run() {
-			String temp;
-			Scanner scanner = new Scanner(System.in);
-			while(true){				
-				temp=scanner.next();	
-				Jaffa(temp);
-			}			
-		}		
-	}	
+	
 
 	// Key listener, figyeli a billentyűzetet, jobban is lehetne implementálni, optimalizálásra szorul
 	class MKeyListener extends KeyAdapter {

@@ -2,6 +2,7 @@ package projlab;
 
 public class Scale extends Tile{
 	
+	@SuppressWarnings("unused")
 	private Tile[] tiles; 	//​Eltárolja a mező szomszédjait.
 	private int[] door;	 //Eltárolja melyik ajtó tartozik a mérleghez.
 	private int currentWeight=0; 	//​Eltárolja mennyi súly van a mérlegen.

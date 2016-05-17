@@ -139,7 +139,8 @@ public class ActionController {
 			if (getNextVisitable(player.coordinates, player.getDirection())
 					.getClass()
 					.getSimpleName()
-					.equals("Scale")) {
+					.equals("Scale")
+					&& ((Scale) getNextVisitable(player.coordinates, player.getDirection())).hasBox) {
 				((Scale) getNextVisitable(player.coordinates, player.getDirection()))
 					.hasBox = false;
 				((Scale) getNextVisitable(player.coordinates, player.getDirection()))
@@ -169,6 +170,7 @@ public class ActionController {
 					.getClass()
 					.getSimpleName()
 					.equals("Scale")) {
+				
 				((Scale) getNextVisitable(player.coordinates, player.getDirection())).hasBox = true;
 				((Scale) getNextVisitable(player.coordinates, player.getDirection())).setWeight(2);
 				if (((Scale) getNextVisitable(player.coordinates, player

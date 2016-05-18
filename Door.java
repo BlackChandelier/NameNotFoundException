@@ -2,19 +2,18 @@ package projlab;
 
 public class Door extends Tile{
 	
-	private Tile[] tiles;	//​Eltárolja a mező szomszédjait.
-	private Boolean passable=false; //Eltárolja, hogy nyitva van-e az ajtó
+	private Boolean passable=false; //Eltarolja, hogy nyitva van-e az ajto
 	public int doorID;
 	
-	public Boolean isPassable(){ //Megmondja, hogy nyitva van-e az ajtó
+	public Boolean isPassable(){ //Megmondja, hogy nyitva van-e az ajto
 		return passable;
 	}
 	
-	public void changePassable(){	//Megváltoztatja az ajtó átjárhatóságát
+	public void changePassable(){	//Megvaltoztatja az ajto atjarhatosagat
 		passable=!passable;
 	}
 	
-	public int getID(){ //Visszaadja az ajtó azonosítóját
+	public int getID(){ //Visszaadja az ajto azonositojat
 		return doorID; 	
 	}
 }

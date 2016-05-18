@@ -2,41 +2,32 @@ package projlab;
 
 public class PortalBeam implements Visitor {
 	
-	private String color; 	//​A lövedék színét tárolja.
-	private Tile tile;	 //​A lövedék helyét tárolja.
-	private int direction; 	 //​A lövedék irányát tárolja.
+	private String color; 	//​A lovedek szinet tarolja.
+	private int direction; 	 //​A lovedek iranyat tarolja.
 	public int[] coordinates;
 	
+	//visitor pattern
 	@Override
 	public void visit(Visitable visitable) {
 		this.coordinates=((Tile) visitable).coordinates;
 	}
 	
-	public void changeColor(String col){	//Beállítja a lövedék színét.
+	public void changeColor(String col){	//Beallitja a lovedek szinet.
 		color=col;
 	}
 	
-	public String getColor(){	 //Visszaadja a lövedék színét.
+	public String getColor(){	 //Visszaadja a lovedek szinet.
 		return color;
 	}
 	
-	public void setDirection(int newDirection){ //Beállítja a lövedék irányát. 
-		/*Ez a kilövéskor beállítódik.
-		 *  Az irány a játékosnak a kilövés pillanatában meglévő irányával lesz azonos.*/
+	public void setDirection(int newDirection){ //Beallitja a lovedek iranyat. 
+		/*Ez a kiloveskor beallitodik.
+		 *  Az irany a jatekosnak a kiloves pillanataban meglevo iranyaval lesz azonos.*/
 		direction=newDirection;
 
 	}
 
-	public int getDirection(){ //Visszaadja a lövedék irányát.
+	public int getDirection(){ //Visszaadja a lovedek iranyat.
 		return direction;	
 	}
-	
-	
-	public Visitable getVisitable(){	//Visszaadja következő mezőt.
-		return tile.getVisitable(direction);	
-	}
-
-	public void setVisitable(Visitable newVisitable){	//Beállítja a következő mezőt.
-	}
-
 }

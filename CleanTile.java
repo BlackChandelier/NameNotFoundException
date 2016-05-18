@@ -2,14 +2,13 @@ package projlab;
 
 public class CleanTile extends Tile{
 	
-	private Tile[] tiles;	//​Eltárolja a mező szomszédjait.
-	private Boolean hasZPM=false;	//Eltárolja, hogy van-e a mezőn felvehető ZPM
+	private Boolean hasZPM=false;	//Eltarolja, hogy van-e a mezon felveheto ZPM
 	
-	public void changeZPM(){ //Átállítja, hogy van-e ZPM a mezőn
+	public void changeZPM(){ //Atallitja, hogy van-e ZPM a mezon
 		hasZPM=!hasZPM;
 	}
 	
-	public Boolean getZPM(){ //Megmondja, hogy van-e ZPM a mezőn
+	public Boolean getZPM(){ //Megmondja, hogy van-e ZPM a mezon
 		return hasZPM;
 	}
 }

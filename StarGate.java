@@ -1,33 +1,34 @@
 package projlab;
 
 public class StarGate extends Tile{
-	
-	private Tile[] tiles; 	//​Eltárolja a mező szomszédjait.
-	Boolean passable;	//Eltárolja, hogy átjárható-e az adott csillagkapu.
+
+	Boolean passable;	//Eltarolja, hogy atjarhato-e az adott csillagkapu.
 	private String color;
 	
-	public StarGate() {
+	public StarGate() { //alap konstruktor
 	}
-	public StarGate(String col) {
+	
+	public StarGate(String col) { //adott szinnel konstruktor
 		color=col;
 	}
 
-	public Boolean isPassable(){
+	public Boolean isPassable(){ //atjarhatosag lekerdezese
 		return passable;
 	}
 	
-	public void changePassable(){
+	public void changePassable(){ //atjarhatosag valtoztatasa
 		passable=!passable;
 	}
 	
-	public void setColor(String color){
+	public void setColor(String color){ //szin beallitasa
 		this.color=color;
 	}
 	
-	public String getColor(){
+	public String getColor(){ //szin lekerdezese
 		return color;
 	}
-	public void changeColor(String col) {
+	
+	public void changeColor(String col) { //szin valtasa
 		color=col;
 	}
 }

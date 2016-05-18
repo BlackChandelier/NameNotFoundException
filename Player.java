@@ -2,18 +2,14 @@ package projlab;
 
 public class Player implements Visitor{
 	
-	private String name; //​Játékos neve
-	private int direction=0; //​A játékos irányát tárolja.
-	private Boolean hasBox=false; //​Azt jegyzi, hogy van a felhasználónál doboz, vagy nincs.
-	private Tile tile; //Azt a Tile­t tárolja, amelyiken a felhasználó karaktere éppen áll.
-	private int collectedZPMs=0; //​Azért felel, hogy az összegyűjtött elemeket ZPMeket számontartsa.
-	int coordinates[]=new int[2];
-			
-	public static Visitable getVisitable(){ //megadja, hogy mi a következő mező
-		
-		return null;
-	}
-	public void visit(Visitable visitable) { //meglátogatja az adott mezőt
+	//private String name; //​Jatekos neve
+	private int direction=0; //​A jatekos iranyat tarolja.
+	private Boolean hasBox=false; //​Azt jegyzi, hogy van a felhasznalonal doboz, vagy nincs.
+	private int collectedZPMs=0; //​Azert felel, hogy az osszegyujtott elemeket ZPMeket szamontartsa.
+	int coordinates[]=new int[2]; //koordinatak
+	
+	//visitor pattern
+	public void visit(Visitable visitable) { //meglatogatja az adott mezot
 		switch (visitable.getClass().getSimpleName()){
 		case "CleanTile":
 			CleanTile tempCT= (CleanTile) visitable;
@@ -48,42 +44,35 @@ public class Player implements Visitor{
 		
 	}
 	
-	public Boolean getBox(){ //megmondja van-e doboz van a játékosnál
-		
+	public Boolean getBox(){ //megmondja van-e doboz van a jatekosnal
 		return hasBox;
-		
 	}
 	
-	public void setVisitable(Visitable visitable){ //beállítja a következő mezőt
-		
-	}
-	
-	public void changeBox(){ //megváltoztatja, hogy van-e épp doboz a játékosnál
+	public void changeBox(){ //megvaltoztatja, hogy van-e epp doboz a jatekosnal
 		hasBox=!hasBox;
 	}
 		  	
-	
-	public void addZPM(){ //hozzáad egyet a játékosnál lévő ZPM-ekhez 
+	public void addZPM(){ //hozzaad egyet a jatekosnal levo ZPM-ekhez 
 		collectedZPMs++;
-		/* Itt még új ZPM-et is kell csináltatni minden második ZPM felvételnél*/
 	}
 	
-	public int getZPMs(){
+	public int getZPMs(){ //osszegyujtott zpm-ek szamat adja vissza
 		return collectedZPMs;
 	}
-	public int getRow(){
+	
+	public int getRow(){ //elso koordinata lekerdezese
 		return coordinates[0];
 	}
 	
-	public int getColumn(){
+	public int getColumn(){ //masodik koordinata lekerdezese
 		return coordinates[1];
 	}
 	
-	public int getDirection(){
+	public int getDirection(){ //irany lekerese
 		return direction;
 	}
 	
-	public void setDirection(int dir){
+	public void setDirection(int dir){ //ireny beallitasa
 		direction=dir;
 	}
 

@@ -1,7 +1,7 @@
 package projlab;
 
 public class Hole extends Tile{
-	private Tile[] tiles;	//​Eltárolja a mező szomszédjait.
+	//visitor pattern
 	@Override
 	public void accept(Visitor visitor){
 		visitor.visit(this);

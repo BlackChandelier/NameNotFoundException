@@ -7,17 +7,14 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
-
-import javax.swing.JFrame;
 
 public class Game {
 	
 	protected ActionController ac;
 	protected View view = new View();	
-	int toFile=0;	
 
+	//megjelenitest segito osztalyok letrehozasa
 	WallView WV = new WallView(view);
 	CleanTileView CTV = new CleanTileView(view);
 	BoxedTileView BTV = new BoxedTileView(view);
@@ -30,60 +27,30 @@ public class Game {
 	PortalBeamView PBV = new PortalBeamView(view);	
 	ReplicatorView RV = new ReplicatorView(view);
 	ZPMView ZV = new ZPMView(view);
-	int pDirection = -1; // feljegyezzük a játékos pozícióját
-	int file=0;
-	int column=0;
-	int row=0;
 	
+	int pDirection = -1; // feljegyezzuk a jatekos poziciojat
+	int column=0; //oszlopok
+	int row=0; //sorok
+	ViewThread VT;
+    Thread viewthread;
+    CustomMouseListener listener;
 	
-	public void run() throws FileNotFoundException{ //A játékot készíti elő. Létrehozza az ActionControllert.
+	public void run() throws FileNotFoundException{ //A jatekot kesziti elo. Letrehozza az ActionControllert.
 	
-		ac=new ActionController();		
-		String filename;
-		int file=0;
-		int column=0;
-		int row=0;
+		ac=new ActionController();
 		
 		try {
-			view.menu();
+			view.menu(); // menu megjelenitese
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		CustomMouseListener listener = new CustomMouseListener();
+		listener = new CustomMouseListener(); //listener letrehozasa
 		view.addMouseListener(listener);
-		
-	    /*Scanner scanFileName = new Scanner(System.in);
-	    file=scanFileName.nextInt();
-	    switch(file){
-	    case 1:
-	    	filename="test1.csv";
-	    	break;
-	    case 2:
-	    	filename="test2.csv";
-	    	break;
-	    case 3:
-	    	filename="test3.csv";
-	    	break;
-	    case 4:
-	    	filename="test4.csv";
-	    	break;
-	    case 5:
-	    	filename="test5.csv";
-	    	break;
-	    case 6:
-	    	filename="test6.csv";
-	    	break;
-	    case 7:
-	    	filename="test7.csv";
-	    	break;
-	    default:
-	    	filename="level3.csv";
-	    }*/		
 	}
 	
+	//egy masik futtato folyamat, aminek a dolga a felinicializalast
 	public void run2(String filename) throws FileNotFoundException{
-		Scanner scanner = new Scanner(new File(filename)); //Itt nyitjuk meg a beolvasandó pályát
+		Scanner scanner = new Scanner(new File(filename)); //Itt nyitjuk meg a beolvasando palyat
 	    scanner.useDelimiter(",");
 	    System.out.print(" ");  
 	    
@@ -91,11 +58,11 @@ public class Game {
 	    ac.columns=scanner.nextInt();
 	    scanner.next();
 
-		ac.visitables​=new Tile[ac.rows][ac.columns]; //Létrehozunk egy megfelelő méretű pályát
-		ac.starGates​=new StarGate[4]; //Létrehozzuk a csillagkapukat eltároló tömböt
+		ac.visitables​=new Tile[ac.rows][ac.columns]; //Letrehozunk egy megfelelo meretu palyat
+		ac.starGates​=new StarGate[4]; //Letrehozzuk a csillagkapukat eltarolo tombot
 		for(int i=0;i<4;i++)
 			ac.starGates​[i]=null;
-		ac.beams=new PortalBeam[4]; //Létrehozzuk a lövedékeket eltároló tömböt
+		ac.beams=new PortalBeam[4]; //Letrehozzuk a lovedekeket eltarolo tombot
 		for(int i=0;i<4;i++)
 			ac.beams[i]=null;
 				
@@ -103,31 +70,31 @@ public class Game {
 	       String temp=scanner.next();
 	       int tempArray[] ={row,column};
 	       if(temp.contains(System.getProperty("line.separator"))){ 
-	    	   /*sortörés esetén a pályán is új sort kezdünk*/
+	    	   /*sortores eseten a palyan is uj sort kezdunk*/
 	    	   row++;
 	    	   column=0;
 	       }
 	       else{
-	    	   /*egyébként pedig a beolvasott betű alapján hozzuk létre a megfelelő típusú mezőt*/
+	    	   /*egyebkent pedig a beolvasott betu alapjan hozzuk letre a megfelelo tipusu mezot*/
 		       switch(temp.charAt(0)){
 		       		case 'P':
 		       			ac.visitables​[row][column]=new StarGate();
 		       		 switch(temp.charAt(1)){
 		       		 case 'b':
 		       			((StarGate) ac.visitables​[row][column]).setColor("blue");
-		       			ac.starGates​[0]=ac.visitables​[row][column]; //a 0 helyen tároljuk a kék portált
+		       			ac.starGates​[0]=ac.visitables​[row][column]; //a 0 helyen taroljuk a kek portalt
 		       			break;
 		       		 case 'r':
 		       			((StarGate) ac.visitables​[row][column]).setColor("red");
-		       			ac.starGates​[1]=ac.visitables​[row][column]; //a 1 helyen tároljuk a piros portált
+		       			ac.starGates​[1]=ac.visitables​[row][column]; //a 1 helyen taroljuk a piros portalt
 		       			break;
 		       		 case 'g':
 		       			((StarGate) ac.visitables​[row][column]).setColor("green");
-		       			ac.starGates​[2]=ac.visitables​[row][column]; //a 2 helyen tároljuk a zöld portált
+		       			ac.starGates​[2]=ac.visitables​[row][column]; //a 2 helyen taroljuk a zold portalt
 		       			break;
 		       		 case 'y':
 		       			((StarGate) ac.visitables​[row][column]).setColor("yellow");
-		       			ac.starGates​[3]=ac.visitables​[row][column]; //a 3 helyen tároljuk a sárga portált
+		       			ac.starGates​[3]=ac.visitables​[row][column]; //a 3 helyen taroljuk a sarga portalt
 		       			break;
 		       			}
 	       			break;
@@ -263,43 +230,21 @@ public class Game {
 	    scanner.close();
 	    view.setMap(column, row);
 	    view.addMyKeyListener(new MKeyListener());	
+	    view.removeMouseListener(listener);
 	    try {
 			drawWalls();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    ViewThread VT = new ViewThread();
-	    Thread viewthread = new Thread(VT);
+	    VT = new ViewThread();
+	    viewthread = new Thread(VT);
 	    viewthread.start();
 	    ReplicatorThread RT = new ReplicatorThread();
 	    Thread repthread = new Thread(RT);
 	    repthread.start();
 	}
-	
-	
-	public void play() throws FileNotFoundException, UnsupportedEncodingException{	//​Meghívásakor elindul a játék. Innentől kezdve az ActionController feladata a bemenetek kezelése.
-	    /*System.out.print("Add meg, hogy consol-ra vagy fájlba szeretnél írni (0:consol, 1:fájl): ");
-	    Scanner scanWhere = new Scanner(System.in);
-	    toFile=scanWhere.nextInt();	    */
-	    
-				
-	    try {	    	
-			drawWalls();
-			for(int i = 0; i < ac.getRows();i++){
-		    	for(int j = 0; j < ac.getColumns();j++){		    		
-		    			drawTile(i,j);
-		    	}
-		    }  
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-		e.printStackTrace();
-		}
-	    	    
 		
-	}	
-	
-	// Adott koordinátán lévő mezőt kirajzoljuk
+	// Adott koordinatan levo mezot kirajzoljuk
 	private void drawTile(int i, int j) throws IOException{
 		Visitable v = ac.getTile(i, j);
 		String classname = v.getClass()
@@ -321,7 +266,7 @@ public class Game {
 		}
 	}
 	
-	// Csak a falakat rajzoljuk ki, egyszer hívódik meg a játék folyamán összesen
+	// Csak a falakat rajzoljuk ki, egyszer hivodik meg a jatek folyaman osszesen
 	private void drawWalls() throws IOException{
 		 for(int i = 0; i < ac.getRows();i++){
 		    	for(int j = 0; j < ac.getColumns();j++){
@@ -336,10 +281,9 @@ public class Game {
 		    }
 	}
 	
-	// Megjelenítéssel foglalkozó szál hívogatja folyamatosan, megjeleníti a pályát
-	
+	// Megjelenitessel foglalkozo szal hivogatja folyamatosan, megjeleniti a palyat
 	private void Output() throws IOException{
-		//O'Neil pozíciója
+		//O'Neil pozicioja
 		int oRow;
 		int oColumn;
 		
@@ -350,7 +294,7 @@ public class Game {
 			oRow=-1;
 			oColumn=-1;
 		}
-		//Jaffa pozíciója
+		//Jaffa pozicioja
 		int jRow;
 		int jColumn;
 		
@@ -361,7 +305,7 @@ public class Game {
 			jRow=-1;
 			jColumn=-1;
 		}
-		// Mezők kirajzolása, ha visitor áll rajta, nem bántjuk (nem rajzoljuk ki újra)
+		// Mezok kirajzolasa, ha visitor all rajta, nem bantjuk (nem rajzoljuk ki ujra)
 	    for(int i = 0; i < ac.getRows();i++){
 	    	for(int j = 0; j < ac.getColumns();j++){
 	    		if(ac.getPlayer(0)!=null){
@@ -387,40 +331,35 @@ public class Game {
     	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
     	    				drawTile(i,j);
     	    		}  	
-	    		} else { /////////////////////////////////////////////////////////////////IDE KELL A VERESÉG KÉPERNYŐ
+	    		} else { 
 	    			if(!ac.replicatorIsAlive)
 	    				drawTile(i,j);
 	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
 	    				drawTile(i,j);
-	    		}
-	    		/*if(i != oRow && j != oColumn || i!=jRow && j!=jColumn){
-	    			if(!ac.replicatorIsAlive)
-	    				drawTile(i,j);
-	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
-	    				drawTile(i,j);
-	    		} */ 	    					
+	    			end(false);
+	    		}	    			    					
 	    	}
 	    }  
 	    
-	    //playerek, ha nem változik a játékos iránya, nem rajzoljuk ki újra a mezőt, amin áll
+	    //playerek, ha nem valtozik a jatekos iranya, nem rajzoljuk ki ujra a mezot, amin all
 	    for(int i = 0; i < 2; i++){
 	    	Player p = ac.getPlayer(i);
-	    	if (p == null)
-	    		break;
-	    	boolean o = true;	    	
-	    	int row = p.getRow();
-	    	int column = p.getColumn();
-	    	int direction = p.getDirection();
-	    	if (i == 1)
-	    		o = false;
-	    	if(direction != pDirection){
-	    		pDirection = direction;
-	    		drawTile(row,column);
+	    	if (p != null){
+		    	boolean o = true;	    	
+		    	int row = p.getRow();
+		    	int column = p.getColumn();
+		    	int direction = p.getDirection();
+		    	if (i == 1)
+		    		o = false;
+		    	if(direction != pDirection){
+		    		pDirection = direction;
+		    		drawTile(row,column);
+		    	}
+		    	PV.drawPlayer(row, column, o, direction);
 	    	}
-	    	PV.drawPlayer(row, column, o, direction);
 	    }
 	    
-	    //lövedékek
+	    //lovedekek
 	    for(int i = 0; i < 4;i++){
 	    	PortalBeam b = ac.beams[i];
 	    	if(b != null){	    		
@@ -432,15 +371,16 @@ public class Game {
 	    	}
 	    }
 	    
-	    //replikátor
+	    //ha a replikator meg el
 	    if(ac.replicatorIsAlive){
 	    	RV.drawReplicator(ac.getReplicatorX(), ac.getReplicatorY());
 	    }		
 	}
 	
+	//ONeill iranyitasaert es mozgatasaert felelos programresz
 	private void ONeill(String temp){		
 		switch(temp){
-		/*O'Neill ezredes mozgatása*/
+		/*O'Neill ezredes mozgatasa*/
 		case "4": //balra
 			if(ac.players[0]!=null)
 				ac.move(ac.players[0],0);
@@ -457,12 +397,12 @@ public class Game {
 			if(ac.players[0]!=null)
 				ac.move(ac.players[0],3);
 			break;
-		/*Ezredes dobozfelvétele*/
+		/*Ezredes dobozfelvetele*/
 		case "5":
 			if(ac.players[0]!=null)
 			ac.boxing(ac.players[0]);
 			break;
-		/*Ezredes lövés*/
+		/*Ezredes loves*/
 		case "7":
 			if(ac.players[0]!=null)
 			ac.shoot(ac.players[0], "red");
@@ -474,6 +414,7 @@ public class Game {
 	}
 }
 	
+	//Jaffa iranyitasaert es mozgatasaert felelos programresz
 	private void Jaffa(String temp){		
 		switch(temp){
 		case "a": //balra
@@ -492,12 +433,12 @@ public class Game {
 		if(ac.players[1]!=null)
 			ac.move(ac.players[1],3);
 		break;
-		/*Jaffa dobozfelvétele*/
+		/*Jaffa dobozfelvetele*/
 		case "r":
 		if(ac.players[1]!=null)
-		ac.boxing(ac.players[0]);
+		ac.boxing(ac.players[1]);
 		break;
-		/*Jaffa lövés*/
+		/*Jaffa loves*/
 		case "q":
 		if(ac.players[1]!=null)
 		ac.shoot(ac.players[1], "green");
@@ -508,9 +449,13 @@ public class Game {
 		}
 		
 	}
+	
+	//jatek vegen meghivodo fuggveny
+	public void end(boolean vic){
+		view.end(vic);		
+	}
 
-
-	// Replicátor mozgatásáért felel
+	// Replicator mozgatasaert felel
 	private class ReplicatorThread implements Runnable{
 
 		@Override
@@ -520,7 +465,6 @@ public class Game {
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}			
@@ -528,57 +472,41 @@ public class Game {
 		
 	}
 	
-	//Megjelenítésért felel
+	//Megjelenitesert felel
 	private class ViewThread implements Runnable{
 
+		boolean run = true;
+		
 		@Override
 		public void run() {
-			while(true){
-				try {
-					ac.getMap();
-					Output();					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			while(run){
+				if(ac.vic){ //nyrtunk?
+					end(true);
 				}
-				try {
-					Thread.sleep(20);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				else{
+					if (ac.players[0]==null && ac.players[1]==null){ //van meg jatekos?
+						end(false);
+					}
+					else{
+						try { //meg megy a jatek, kiirjuk a palyat
+							ac.getMap();
+							Output();						
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						try {
+							Thread.sleep(20);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}							
 		}
 		
 	}
 	
-	// unused
-	private class ONeillThread implements Runnable{
-		@Override
-		public void run() {	
-			String temp;
-			Scanner scanner = new Scanner(System.in);
-			while(true){				
-				temp=scanner.next();	
-				ONeill(temp);
-			}
-		}		
-	}
-	 // unused
-	private class JaffaThread implements Runnable{
-
-		@Override
-		public void run() {
-			String temp;
-			Scanner scanner = new Scanner(System.in);
-			while(true){				
-				temp=scanner.next();	
-				Jaffa(temp);
-			}			
-		}		
-	}	
-
-	// Key listener, figyeli a billentyűzetet, jobban is lehetne implementálni, optimalizálásra szorul
+	// Key listener, figyeli a billentyuzetet, jobban is lehetne implementalni, optimalizalasra szorul
 	class MKeyListener extends KeyAdapter {
 
 	    @Override
@@ -589,14 +517,12 @@ public class Game {
 	    	try {
 				Thread.sleep(40);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    }
 	}
 
-	
-	//egérlttuntást figyelő osztáy
+	//egerlttuntast figyelo osztay
 	class CustomMouseListener implements MouseListener{
 
 		public int clickedButton;
@@ -613,7 +539,6 @@ public class Game {
 				try {
 					run2("level1.csv");
 				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			else if (e.getX() >  97 && e.getX() < 303 &&
@@ -624,10 +549,6 @@ public class Game {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			//custom gomb
-			else if (e.getX() >  97 && e.getX() < 303 &&
-					 e.getY() > 254 && e.getY() < 326)
-						clickedButton = 3;
 		}		
 
 		@Override

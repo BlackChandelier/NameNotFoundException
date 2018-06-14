@@ -39,10 +39,6 @@ public class Player implements Visitor{
 		case "Scale":
 			Scale tempS= (Scale) visitable;
 			this.coordinates=tempS.coordinates;
-			((Scale) visitable).setWeight(4);
-			/*if(((Scale) visitable).getWeight()>=((Scale) visitable).getWeightLimit()){
-				((Scale) visitable).getDoor()
-			}*/
 			break;
 		case "StarGate":
 			StarGate tempSG= (StarGate) visitable;

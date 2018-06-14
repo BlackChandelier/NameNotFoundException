@@ -1,28 +1,61 @@
 package projlab;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
+
+import javax.swing.JFrame;
 
 public class Game {
 	
 	protected ActionController ac;
-	protected View view;
-	int toFile=0;
+	protected View view = new View();	
+	int toFile=0;	
 
+	WallView WV = new WallView(view);
+	CleanTileView CTV = new CleanTileView(view);
+	BoxedTileView BTV = new BoxedTileView(view);
+	DoorView DV = new DoorView(view);
+	HoleView HV = new HoleView(view);
+	ScaleView SV = new ScaleView(view);
+	StarGateView SGV = new StarGateView(view);	   
+	SpecialWallView SWV = new SpecialWallView(view);
+	PlayerView PV = new PlayerView(view);
+	PortalBeamView PBV = new PortalBeamView(view);	
+	ReplicatorView RV = new ReplicatorView(view);
+	ZPMView ZV = new ZPMView(view);
+	int pDirection = -1; // feljegyezzük a játékos pozícióját
+	int file=0;
+	int column=0;
+	int row=0;
+	ViewThread VT;
+    Thread viewthread;
+    CustomMouseListener listener;
+	
 	public void run() throws FileNotFoundException{ //A játékot készíti elő. Létrehozza az ActionControllert.
 	
-		ac=new ActionController();
-		view=new View();
+		ac=new ActionController();		
 		String filename;
 		int file=0;
 		int column=0;
 		int row=0;
 		
-		view.menu();
+		try {
+			view.menu();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		listener = new CustomMouseListener();
+		view.addMouseListener(listener);
 		
-	    Scanner scanFileName = new Scanner(System.in);
+	    /*Scanner scanFileName = new Scanner(System.in);
 	    file=scanFileName.nextInt();
 	    switch(file){
 	    case 1:
@@ -48,7 +81,10 @@ public class Game {
 	    	break;
 	    default:
 	    	filename="level3.csv";
-	    }
+	    }*/		
+	}
+	
+	public void run2(String filename) throws FileNotFoundException{
 		Scanner scanner = new Scanner(new File(filename)); //Itt nyitjuk meg a beolvasandó pályát
 	    scanner.useDelimiter(",");
 	    System.out.print(" ");  
@@ -126,6 +162,7 @@ public class Game {
 		       		case 'Z':
 		       			ac.visitables​[row][column]=new CleanTile();
 		       			((CleanTile) ac.visitables​[row][column]).changeZPM();
+		       			ac.countZPMs++;
 		       			ac.visitables​[row][column].coordinates=tempArray;
 		       			break;
 		       		case 'B':
@@ -154,7 +191,11 @@ public class Game {
 		       				if(i!=row){
 			       			    for(int j = 0; j<ac.columns; j++)
 			       			    {
-			       			    	if(ac.visitables​[i][j].getClass().getSimpleName().equals("Scale")&&((Scale) ac.visitables​[i][j]).getID()==tempDoor.doorID){
+			       			    	if(ac.visitables​[i][j]
+			       			    			.getClass()
+			       			    			.getSimpleName()
+			       			    			.equals("Scale")
+			       			    		&&((Scale) ac.visitables​[i][j]).getID()==tempDoor.doorID){
 			       			    		((Scale) ac.visitables​[i][j]).setDoor(row,column);
 			       			    	}
 			       			    		
@@ -163,7 +204,11 @@ public class Game {
 		       				else{
 		       				 for(int j = 0; j<column; j++)
 			       			    {
-			       			    	if(ac.visitables​[i][j].getClass().getSimpleName().equals("Scale")&&((Scale) ac.visitables​[i][j]).getID()==tempDoor.doorID){
+			       			    	if(ac.visitables​[i][j]
+			       			    			.getClass()
+			       			    			.getSimpleName()
+			       			    			.equals("Scale")
+			       			    		&&((Scale) ac.visitables​[i][j]).getID()==tempDoor.doorID){
 			       			    		((Scale) ac.visitables​[i][j]).setDoor(row,column);
 			       			    	}
 			       			    		
@@ -183,7 +228,11 @@ public class Game {
 		       				if(i!=row){
 			       			    for(int j = 0; j<ac.columns; j++)
 			       			    {
-			       			    	if(ac.visitables​[i][j].getClass().getSimpleName().equals("Door")&&((Door) ac.visitables​[i][j]).getID()==tempScale.scaleID){
+			       			    	if(ac.visitables​[i][j]
+			       			    			.getClass()
+			       			    			.getSimpleName()
+			       			    			.equals("Door")
+			       			    		&&((Door) ac.visitables​[i][j]).getID()==tempScale.scaleID){
 			       			    		((Scale) ac.visitables​[row][column]).setDoor(i,j);
 			       			    	}
 			       			    		
@@ -192,7 +241,11 @@ public class Game {
 		       				else{
 		       				 for(int j = 0; j<column; j++)
 			       			    {
-			       			    	if(ac.visitables​[i][j].getClass().getSimpleName().equals("Door")&&((Door) ac.visitables​[i][j]).getID()==tempScale.scaleID){
+			       			    	if(ac.visitables​[i][j]
+			       			    			.getClass()
+			       			    			.getSimpleName()
+			       			    			.equals("Door")
+			       			    		&&((Door) ac.visitables​[i][j]).getID()==tempScale.scaleID){
 			       			    		((Scale) ac.visitables​[row][column]).setDoor(i,j);
 			       			    	}
 			       			    		
@@ -210,87 +263,361 @@ public class Game {
 	       }
 	    }
 	    scanner.close();
-	    
+	    view.setMap(column, row);
+	    view.addMyKeyListener(new MKeyListener());	
+	    view.removeMouseListener(listener);
+	    try {
+			drawWalls();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    VT = new ViewThread();
+	    viewthread = new Thread(VT);
+	    viewthread.start();
+	    ReplicatorThread RT = new ReplicatorThread();
+	    Thread repthread = new Thread(RT);
+	    repthread.start();
+	}
+		
+	
+	// Adott koordinátán lévő mezőt kirajzoljuk
+	private void drawTile(int i, int j) throws IOException{
+		Visitable v = ac.getTile(i, j);
+		String classname = v.getClass()
+				.getName()
+				.substring(8);
+		switch(classname){			
+			case "CleanTile": 
+				CTV.drawCleanTile(i, j);
+				if(((CleanTile) v).getZPM())
+					ZV.drawZPM(i, j);
+			break;
+			case "Wall": WV.drawWall(i, j); break;		
+			case "BoxedTile": BTV.drawBoxedTile(i, j); break;
+			case "Door": DV.drawDoor(i, j, (Door)v); break;
+			case "Hole": HV.drawHole(i, j); break;
+			case "Scale": SV.drawScale(i, j, (Scale)v); break;
+			case "StarGate": SGV.drawGate(i, j, (StarGate)v); break;	   
+			case "SpecialWall": SWV.drawSpecialWall(i, j); break;
+		}
 	}
 	
-	public void play() throws FileNotFoundException, UnsupportedEncodingException{	//​Meghívásakor elindul a játék. Innentől kezdve az ActionController feladata a bemenetek kezelése.
-	    Scanner scanner = new Scanner(System.in);
-	    String temp=null;
-	    System.out.print("Add meg, hogy consol-ra vagy fájlba szeretnél írni (0:consol, 1:fájl): ");
-	    Scanner scanWhere = new Scanner(System.in);
-	    toFile=scanWhere.nextInt();
-		do{
-		    System.out.println("\n");
-		    if(toFile==1)
-		    	ac.writeMap();
-		    else
-		    	ac.getMap();
-			System.out.print("\nAdj meg egy parancsot: ");
-			temp=scanner.next();
-			
-			switch(temp){
-			/*O'Neill ezredes mozgatása*/
-			case "4": //balra
-				if(ac.players[0]!=null)
-					ac.move(ac.players[0],0);
-				break;
-			case "8": //fel
-				if(ac.players[0]!=null)
-					ac.move(ac.players[0],1);
-				break;
-			case "6": //jobbra
-				if(ac.players[0]!=null)
-					ac.move(ac.players[0],2);
-				break;
-			case "2": //le
-				if(ac.players[0]!=null)
-					ac.move(ac.players[0],3);
-				break;
-			/*Ezredes dobozfelvétele*/
-			case "5":
-				if(ac.players[0]!=null)
-				ac.boxing(ac.players[0]);
-				break;
-			/*Ezredes lövés*/
-			case "+r":
-				if(ac.players[0]!=null)
-				ac.shoot(ac.players[0], "red");
-				break;
-			case "+b":
-				if(ac.players[0]!=null)
-				ac.shoot(ac.players[0], "blue");
-				break;
-			/*Jaffa mozgatása*/
-			case "a": //balra
-				if(ac.players[1]!=null)
-					ac.move(ac.players[1],0);
-				break;
-			case "w": //fel
-				if(ac.players[1]!=null)
-					ac.move(ac.players[1],1);
-				break;
-			case "d": //jobbra
-				if(ac.players[1]!=null)
-					ac.move(ac.players[1],2);
-				break;
-			case "s": //le
-				if(ac.players[1]!=null)
-					ac.move(ac.players[1],3);
-				break;
-			/*Jaffa dobozfelvétele*/
-			case "e":
-				if(ac.players[1]!=null)
-				ac.boxing(ac.players[0]);
-				break;
-			/*Jaffa lövés*/
-			case "+g":
-				if(ac.players[1]!=null)
-				ac.shoot(ac.players[1], "gree");
-				break;
-			case "+y":
-				if(ac.players[1]!=null)
-				ac.shoot(ac.players[1], "yellow");
-			}
-		}while(!(temp.equals("exit")));
+	// Csak a falakat rajzoljuk ki, egyszer hívódik meg a játék folyamán összesen
+	private void drawWalls() throws IOException{
+		 for(int i = 0; i < ac.getRows();i++){
+		    	for(int j = 0; j < ac.getColumns();j++){
+		    		Visitable v = ac.getTile(i, j);
+		    		String classname = v.getClass()
+		    				.getName()
+		    				.substring(8);
+		    		switch(classname){
+		    			case "Wall": WV.drawWall(i, j); break;		    			
+		    		}
+		    	}
+		    }
 	}
+	
+	// Megjelenítéssel foglalkozó szál hívogatja folyamatosan, megjeleníti a pályát
+	
+	private void Output() throws IOException{
+		//O'Neil pozíciója
+		int oRow;
+		int oColumn;
+		
+		if(ac.getPlayer(0)!=null){
+		oRow = ac.getPlayer(0).getRow();
+		oColumn = ac.getPlayer(0).getColumn();		
+		}else{
+			oRow=-1;
+			oColumn=-1;
+		}
+		//Jaffa pozíciója
+		int jRow;
+		int jColumn;
+		
+		if(ac.getPlayer(1)!=null){
+		jRow = ac.getPlayer(1).getRow();
+		jColumn = ac.getPlayer(1).getColumn();		
+		}else{
+			jRow=-1;
+			jColumn=-1;
+		}
+		// Mezők kirajzolása, ha visitor áll rajta, nem bántjuk (nem rajzoljuk ki újra)
+	    for(int i = 0; i < ac.getRows();i++){
+	    	for(int j = 0; j < ac.getColumns();j++){
+	    		if(ac.getPlayer(0)!=null){
+	    			if (ac.getPlayer(1)!=null){
+	    				if((i != oRow || j != oColumn) && (i!=jRow || j!=jColumn)){
+	    	    			if(!ac.replicatorIsAlive)
+	    	    				drawTile(i,j);
+	    	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
+	    	    				drawTile(i,j);
+	    	    		}  	
+	    			}else{
+	    				if(i != oRow || j != oColumn){
+	    	    			if(!ac.replicatorIsAlive)
+	    	    				drawTile(i,j);
+	    	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
+	    	    				drawTile(i,j);
+	    	    		}  	
+	    			}
+	    		}else if(ac.getPlayer(1)!=null){
+	    			if(i != jRow || j != jColumn){
+    	    			if(!ac.replicatorIsAlive)
+    	    				drawTile(i,j);
+    	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
+    	    				drawTile(i,j);
+    	    		}  	
+	    		} else { /////////////////////////////////////////////////////////////////IDE KELL A VERESÉG KÉPERNYŐ
+	    			if(!ac.replicatorIsAlive)
+	    				drawTile(i,j);
+	    			else if (ac.getReplicatorX() != i || ac.getReplicatorY() != j)
+	    				drawTile(i,j);
+	    			end(false);
+	    		}	    			    					
+	    	}
+	    }  
+	    
+	    //playerek, ha nem változik a játékos iránya, nem rajzoljuk ki újra a mezőt, amin áll
+	    for(int i = 0; i < 2; i++){
+	    	Player p = ac.getPlayer(i);
+	    	if (p == null)
+	    		break;
+	    	boolean o = true;	    	
+	    	int row = p.getRow();
+	    	int column = p.getColumn();
+	    	int direction = p.getDirection();
+	    	if (i == 1)
+	    		o = false;
+	    	if(direction != pDirection){
+	    		pDirection = direction;
+	    		drawTile(row,column);
+	    	}
+	    	PV.drawPlayer(row, column, o, direction);
+	    }
+	    
+	    //lövedékek
+	    for(int i = 0; i < 4;i++){
+	    	PortalBeam b = ac.beams[i];
+	    	if(b != null){	    		
+	    	int row = b.coordinates[0];
+	    	int column = b.coordinates[1];
+	    	String color = b.getColor();
+	    	int direction = b.getDirection();
+	    	PBV.drawBeam(row, column, color, direction);
+	    	}
+	    }
+	    
+	    //replikátor
+	    if(ac.replicatorIsAlive){
+	    	RV.drawReplicator(ac.getReplicatorX(), ac.getReplicatorY());
+	    }		
+	}
+	
+	private void ONeill(String temp){		
+		switch(temp){
+		/*O'Neill ezredes mozgatása*/
+		case "4": //balra
+			if(ac.players[0]!=null)
+				ac.move(ac.players[0],0);
+			break;
+		case "8": //fel
+			if(ac.players[0]!=null)
+				ac.move(ac.players[0],1);
+			break;
+		case "6": //jobbra
+			if(ac.players[0]!=null)
+				ac.move(ac.players[0],2);
+			break;
+		case "2": //le
+			if(ac.players[0]!=null)
+				ac.move(ac.players[0],3);
+			break;
+		/*Ezredes dobozfelvétele*/
+		case "5":
+			if(ac.players[0]!=null)
+			ac.boxing(ac.players[0]);
+			break;
+		/*Ezredes lövés*/
+		case "7":
+			if(ac.players[0]!=null)
+			ac.shoot(ac.players[0], "red");
+			break;
+		case "9":
+			if(ac.players[0]!=null)
+			ac.shoot(ac.players[0], "blue");
+			break;
+	}
+}
+	
+	private void Jaffa(String temp){		
+		switch(temp){
+		case "a": //balra
+		if(ac.players[1]!=null)
+			ac.move(ac.players[1],0);
+		break;
+		case "w": //fel
+		if(ac.players[1]!=null)
+			ac.move(ac.players[1],1);
+		break;
+		case "d": //jobbra
+		if(ac.players[1]!=null)
+			ac.move(ac.players[1],2);
+		break;
+		case "s": //le
+		if(ac.players[1]!=null)
+			ac.move(ac.players[1],3);
+		break;
+		/*Jaffa dobozfelvétele*/
+		case "r":
+		if(ac.players[1]!=null)
+		ac.boxing(ac.players[0]);
+		break;
+		/*Jaffa lövés*/
+		case "q":
+		if(ac.players[1]!=null)
+		ac.shoot(ac.players[1], "green");
+		break;
+		case "e":
+		if(ac.players[1]!=null)
+		ac.shoot(ac.players[1], "yellow");
+		}
+		
+	}
+
+	
+	public void end(boolean vic){
+		VT.terminate();
+		view.end(vic);		
+	}
+
+	// Replicátor mozgatásáért felel
+	private class ReplicatorThread implements Runnable{
+
+		@Override
+		public void run() {
+			while(ac.replicatorIsAlive){
+				ac.moveReplicators();
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}			
+		}
+		
+	}
+	
+	//Megjelenítésért felel
+	private class ViewThread implements Runnable{
+
+		boolean run = true;
+		
+		public void terminate(){
+			run = false;
+		}
+		
+		@Override
+		public void run() {
+			while(run){
+				try {
+					ac.getMap();
+					Output();						
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(ac.vic){
+					end(true);
+				}
+			}							
+		}
+		
+	}
+	
+	// Key listener, figyeli a billentyűzetet, jobban is lehetne implementálni, optimalizálásra szorul
+	class MKeyListener extends KeyAdapter {
+
+	    @Override
+	    public void keyPressed(KeyEvent event) {
+	    	String ch = "" + event.getKeyChar();	
+	    	ONeill(ch);
+	    	Jaffa(ch);
+	    	try {
+				Thread.sleep(40);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+	}
+
+	
+	//egérlttuntást figyelő osztáy
+	class CustomMouseListener implements MouseListener{
+
+		public int clickedButton;
+		CustomMouseListener(){
+			clickedButton = 0;
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			
+			//1 player gomb
+			if (e.getX() > 97 && e.getX() < 303 &&
+				e.getY() > 54 && e.getY() < 126)
+				try {
+					run2("level1.csv");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			else if (e.getX() >  97 && e.getX() < 303 &&
+					 e.getY() > 154 && e.getY() < 226)
+				try {
+					run2("level2.csv");
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			//custom gomb
+			else if (e.getX() >  97 && e.getX() < 303 &&
+					 e.getY() > 254 && e.getY() < 326)
+						clickedButton = 3;
+		}		
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
 }

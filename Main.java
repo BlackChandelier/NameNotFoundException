@@ -10,10 +10,8 @@ import java.util.Scanner;
 public class Main {
 		
 	public static void main(String[] args) throws IOException, FileNotFoundException{	   
-	    System.out.print("Add meg a betöltendõ map számát: ");
 	    
 	    Game game = new Game();
-	    game.run();
-	    game.play();
+	    game.run();	    
 	}
 }

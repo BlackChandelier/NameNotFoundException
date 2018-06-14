@@ -1,4 +1,5 @@
 package projlab;
+import java.lang.Math;
 
 public class Replicator implements Visitor {
 
@@ -7,14 +8,16 @@ public class Replicator implements Visitor {
 	public int[] coordinates;
 	
 	public void visit(Visitable visitable) {
-		
+		this.coordinates=((Tile)visitable).coordinates;
 	}
 	
 	public void setDirection() { //a replikátor fordul, akkor hívódik meg ha falba ütközött
-		if(direction<3)
+		/*if(direction<3)
 			direction++;
 		else
-			direction=0;
+			direction=0;*/
+		double i=Math.random()*100;
+		direction=((int)i %4);
 	}
 	
 	public int getDirection() { //visszaadja a replikátor aktuális irányát
